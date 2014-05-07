@@ -10,14 +10,21 @@ import sys
 _loggingEnv = 'WLLVM_OUTPUT'
 _validLogLevels = ['CRITICAL','ERROR', 'WARNING', 'INFO', 'DEBUG']
 logging.basicConfig(level=logging.WARNING, format='%(levelname)s:%(message)s')
-if os.getenv(_loggingEnv):
+
+# the default logging level is ERROR; it can be overwritten 
+# by setting the WLLVM_OUTPUT environment variable
+_defaultLevel = 'ERROR'
+level = _defaultLevel
+
+if os.getenv(_loggingEnv): 
     level = os.getenv(_loggingEnv).upper()
-    if not level in _validLogLevels:
-        logging.error('"{0}" is not a valid value for {1} . Valid values are {2}'.format(
-                      level, _loggingEnv, _validLogLevels))
-        sys.exit(1)
-    else:
-        logging.getLogger().setLevel(getattr(logging, level))
+
+if not level in _validLogLevels:
+    logging.error('"{0}" is not a valid value for {1} . Valid values are {2}'.format(
+                  level, _loggingEnv, _validLogLevels))
+    sys.exit(1)
+else:
+    logging.getLogger().setLevel(getattr(logging, level))
 
 # Adjust the format if debugging
 if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
